@@ -57,6 +57,7 @@ import java.util.Set;
   property = {
     Constants.SERVICE_DESCRIPTION + "=Logtail Servlet",
     "sling.servlet.methods=" + HttpConstants.METHOD_GET,
+    "sling.servlet.methods=" + HttpConstants.METHOD_POST,
     "sling.servlet.paths=" + "/bin/logtail"
   })
 public class LogtailServlet extends SlingAllMethodsServlet {
@@ -236,7 +237,7 @@ public class LogtailServlet extends SlingAllMethodsServlet {
       printWriter.println("<html>");
       printWriter.println("<head>");
       printWriter.println("<title>Logtail</title>");
-      printWriter.println("<script type=\"text/javascript\"> var tailUrl = '/bin/logtail'; </script>");
+      printWriter.println("<script type=\"text/javascript\"> var tailUrl = '/bin/logtail?ajax'; </script>");
 
       printWriter.println("<link href=\"/libs/sling/logtail-plugin/css/reset-min.css\" rel=\"stylesheet\" type=\"text/css\"></link>");
       printWriter.println("<link href=\"/libs/sling/logtail-plugin/css/jquery-ui.css\" rel=\"stylesheet\" type=\"text/css\"></link>");
@@ -365,7 +366,7 @@ public class LogtailServlet extends SlingAllMethodsServlet {
   }
 
   private boolean isAjaxRequest(final HttpServletRequest request) {
-    return "XMLHttpRequest".equals(request.getHeader("X-Requested-With"));
+    return request.getParameterMap().containsKey("ajax");
   }
 
   private boolean filter(String str, LogFilter[] query) {

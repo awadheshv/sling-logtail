@@ -23,7 +23,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.FileAppender;
-import org.apache.felix.utils.json.JSONWriter;
+import com.google.gson.stream.JsonWriter;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.servlets.HttpConstants;
@@ -92,8 +92,8 @@ public class LogtailServlet extends SlingAllMethodsServlet {
           return;
         }
 
-        JSONWriter json = new JSONWriter(response.getWriter());
-        json.object();
+        JsonWriter json = new JsonWriter(response.getWriter());
+        json.beginObject();
 
         boolean reverse = false;
         //long created = getCreatedTimestampFromCookie(request);
@@ -124,7 +124,7 @@ public class LogtailServlet extends SlingAllMethodsServlet {
             }
           }
 
-          json.key("content").array();
+          json.name("content").beginArray();
           int found = 0;
           StringBuilder sb = new StringBuilder();
           String line = null;
@@ -164,7 +164,7 @@ public class LogtailServlet extends SlingAllMethodsServlet {
             }
           }
           for (int i = lines.size() - 1; i > -1; i--) {
-            json.object().key("line").value(lines.get(i)).endObject();
+            json.beginObject().name("line").value(lines.get(i)).endObject();
           }
           json.endArray();
           json.endObject();
@@ -172,7 +172,7 @@ public class LogtailServlet extends SlingAllMethodsServlet {
           randomAccessFile.seek(pos);
           String line = null;
           int lineCount = 0;
-          json.key("content").array();
+          json.name("content").beginArray();
           boolean read = true;
           while (read) {
             StringBuilder input = new StringBuilder();
@@ -210,7 +210,7 @@ public class LogtailServlet extends SlingAllMethodsServlet {
             pos = randomAccessFile.getFilePointer();
 
             if (filter(line, query)) {
-              json.object().key("line").value(line).endObject();
+              json.beginObject().name("line").value(line).endObject();
             }
           }
           json.endArray();

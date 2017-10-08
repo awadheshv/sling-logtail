@@ -1,4 +1,4 @@
-package org.apache.sling.tail;
+package org.apache.sling.tail
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,9 +19,6 @@ package org.apache.sling.tail;
  * under the License.
  */
 
-/**
- *
- */
-public interface LogFilter {
-  boolean eval(String input);
+interface LogFilter {
+  fun eval(input: String): Boolean
 }

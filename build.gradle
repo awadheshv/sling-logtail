@@ -1,8 +1,17 @@
+buildscript {
+  ext.kotlin_version = '1.1.51'
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+  }
+}
 plugins {
   id 'org.dm.bundle' version '0.10.0'
 }
 
-apply plugin: 'java'
+apply plugin: 'kotlin'
 apply plugin: 'org.dm.bundle'
 
 group = 'org.apache.sling'
@@ -10,14 +19,19 @@ version = '1.0.0-SNAPSHOT'
 
 description = """Apache Sling Log Tail Implementation"""
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-tasks.withType(JavaCompile) {
-  options.encoding = 'UTF-8'
+compileKotlin {
+  kotlinOptions {
+    jvmTarget = "1.8"
+  }
 }
-
+compileTestKotlin {
+  kotlinOptions {
+    jvmTarget = "1.8"
+  }
+}
 repositories {
   maven { url "http://repo.maven.apache.org/maven2" }
+  mavenCentral()
 }
 
 dependencies {
@@ -30,14 +44,12 @@ dependencies {
   compileOnly group: 'org.osgi', name: 'org.osgi.compendium', version: '4.2.0'
   compileOnly group: 'org.osgi', name: 'osgi.annotation', version: '6.0.1'
   compileOnly group: 'com.google.code.gson', name: 'gson', version: '2.3'
+  compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 }
 
-sourceSets {
-  main {
-    java {
-      srcDir 'src/main/java'
-    }
-  }
+jar {
+  //comment this if kotlin runtime is available separately on your environment
+  from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 }
 
 bundle {
@@ -51,3 +63,4 @@ bundle {
     'Sling-Bundle-Resources': '/libs/sling/logtail-plugin/css,/libs/sling/logtail-plugin/js'
   ]
 }
+
